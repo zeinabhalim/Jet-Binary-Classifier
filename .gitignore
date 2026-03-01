@@ -1,0 +1,42 @@
+# -----------------------------
+# Build directory
+# -----------------------------
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Compiled binary
+generate
+
+# -----------------------------
+# Data files
+# -----------------------------
+*.csv
+
+# -----------------------------
+# Model files
+# -----------------------------
+*.pth
+
+# -----------------------------
+# Images / plots
+# -----------------------------
+*.png
+*.pdf
+
+# -----------------------------
+# Python cache
+# -----------------------------
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+qgp_env/
+
+# -----------------------------
+# System files
+# -----------------------------
+.DS_Store

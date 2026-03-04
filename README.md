@@ -28,11 +28,11 @@ Accordingly, the combined correlations among these observables allow statistical
 
 ## Repository Structure
 
-- JetBinaryClass/
-  - CMakeLists.txt – C++ build configuration for PYTHIA8 + FastJet
+- `main/`
+  - CMakeLists.txt (configuration requirements for PYTHIA8 + FastJet)
   - LICENSE
   - README.md
-  - src/
+  - Event generation and jet feature extraction in `src/`
     - generate_pythia_jets.cc 
-  - MLmodel/
+  - Neural network training and evaluation model in `MLMODEL/`
     - train.py 

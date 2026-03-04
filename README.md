@@ -23,6 +23,16 @@ Accordingly, the combined correlations among these observables allow statistical
    Extracted jet features are used to train a fully connected neural network implemented in **PyTorch**, optimized using:
    - Binary Cross Entropy (BCE) loss  
    - Adam optimizer
-   - The results had evaluated using the ROC/AUC ratio curve.  
+   - The results had evaluated using the ROC/AUC ratio curve.
+     
 
+## Repository Structure
 
+- JetBinaryClass/
+  - CMakeLists.txt – C++ build configuration for PYTHIA8 + FastJet
+  - LICENSE
+  - README.md
+  - src/
+    - generate_pythia_jets.cc 
+  - MLmodel/
+    - train.py 

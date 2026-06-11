@@ -1,0 +1,118 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Ising-to-QCD Mapping Parameters
+# Reference: Parotto et al., Phys. Rev. C 101, 034901 (2020)
+# ═══════════════════════════════════════════════════════════════════════════
+
+critical_point:
+  Tc:    143.2   # MeV — critical temperature
+  muBc:  350.0   # MeV — critical baryon chemical potential
+  # Note: vHLLE uses GeV internally → Tc=0.1432 GeV, muBc=0.350 GeV
+
+# ── Linear field mapping (T,μB) → (r,h) ────────────────────────────────
+# r = thermal scaling field (even under Z2)
+# h = magnetic scaling field (odd under Z2)
+mapping:
+  alpha1:  3.85    # degrees — angle of h-axis relative to T-axis
+  alpha2:  93.85   # degrees — angle of r-axis relative to T-axis
+  rho:     2.0     # non-universal scale parameter
+  w:       1.0     # non-universal width parameter
+
+# ── 3D Ising universality class critical exponents ───────────────────────
+# These are UNIVERSAL — fixed by Z2 symmetry in d=3, not QCD parameters
+ising_exponents:
+  beta:   0.326    # order parameter: M ~ |t|^beta
+  delta:  4.80     # critical isotherm: M ~ |h|^(1/delta)
+  nu:     0.630    # correlation length: xi ~ |t|^(-nu)
+  eta:    0.036    # anomalous dimension: G(r) ~ r^(-(d-2+eta))
+  gamma:  1.237    # susceptibility: chi ~ |t|^(-gamma) = beta*(delta-1)
+
+# ── Schofield parametrization coefficients ───────────────────────────────
+schofield:
+  c2:   -0.762
+  c4:    0.008
+
+# ── Correlation length settings ──────────────────────────────────────────
+correlation_length:
+  xi0:     1.0    # fm — non-universal normalization
+  xi_max:  3.0    # fm — non-equilibrium cap (prevents unphysical divergence)
+
+# ── Cumulant scaling exponents (Stephanov 2011) ──────────────────────────
+# kappa_n^sing ~ xi^exponent_n
+cumulant_scaling:
+  kappa2_exp:  1.964   # = 2 - eta
+  kappa3_exp:  2.187   # = beta*delta + gamma/2
+  kappa4_exp:  4.373   # = 2*beta*delta + gamma  ← largest signal
+  # Golden observable: kappa4/kappa2 ~ xi^(4.373-1.964) = xi^2.409
+
+# ── Embedding settings ───────────────────────────────────────────────────
+embedding:
+  strength:  0.2   # 0 = no embedding (pure vHLLE), 1 = full Ising signal
+  # Formula per cell: kappa_n^cell = 1 + strength * (xi^exponent_n - 1)
+
+# ── BES run configuration ────────────────────────────────────────────────
+bes_runs:
+  signal:
+    energy_gev:   7.7
+    label:        1
+    muB_mean_mev: 421
+    T_mean_mev:   131
+    cells:        264745
+    freeze_out:   data/signal_freezeout_7gev.dat
+    sampler_out:  data/vHlle-sampler BES II/signal_7gev/particle_lists.oscar
+
+  control:
+    energy_gev:   11.5
+    label:        1
+    muB_mean_mev: 316
+    T_mean_mev:   146
+    cells:        362521
+    freeze_out:   data/control_11gev.dat
+    sampler_out:  data/vHlle-sampler BES II/control_11gev/particle_lists.oscar
+
+  baseline:
+    energy_gev:   19.6
+    label:        0
+    muB_mean_mev: 215
+    T_mean_mev:   153
+    cells:        670229
+    freeze_out:   data/baseline_19gev.dat
+    sampler_out:  data/vHlle-sampler BES II/baseline_19gev/particle_lists.oscar
+
+# ── ML training features ─────────────────────────────────────────────────
+# From analysis/jets_training.csv — jet-level observables from SMASH output
+ml_features:
+  - jet_pt           # jet transverse momentum [GeV]
+  - jet_eta          # jet pseudorapidity
+  - jet_phi          # jet azimuthal angle
+  - jet_mass         # jet invariant mass [GeV]
+  - nconstituents    # number of jet constituents
+  - pt_d             # jet pT dispersion = sqrt(sum pTi^2) / sum pTi
+  - sqrt_d12         # sqrt of Cambridge/Aachen splitting scale d12
+
+# ── Sampler configuration (SMASH-hadron-sampler v3.0) ────────────────────
+sampler:
+  ecrit:            0.5     # GeV/fm^3 — switching energy density
+  number_of_events: 1000
+  shear:            1       # include shear viscosity corrections
+  bulk:             0       # no bulk viscosity corrections
+  call_syntax:      "sampler events 1000 config.txt"
+
+# ── vHLLE hydro parameters per BES energy ────────────────────────────────
+vhlle:
+  eos:        Laine_nf3.dat   # equation of state table
+  ic_model:   3               # 3 = UrQMD averaged IC
+  e_crit:     0.5             # GeV/fm^3 — freeze-out criterion
+
+  energies:
+    7.7_gev:
+      tau0:    3.2    # fm/c — nuclear passing time
+      etaS:    0.20   # shear viscosity / entropy density
+      etamax:  2.5
+    11.5_gev:
+      tau0:    2.1
+      etaS:    0.20
+      etamax:  2.5
+    19.6_gev:
+      tau0:    1.22
+      etaS:    0.15
+      etamax:  2.5

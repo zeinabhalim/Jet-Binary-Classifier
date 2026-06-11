@@ -97,70 +97,65 @@ $SAMPLER events 1000 configs/sampler_19gev.txt
 
 Each config file specifies `surface`, `spectra_dir`, `number_of_events`, `shear`, `ecrit`.
 
-### BES Freeze-out Surface Results
-
-Freeze-out surfaces produced by vHLLE with UrQMD-averaged initial conditions (centrality 20–50%):
-
-| √s (GeV) | τ₀ (fm/c) | η/s | ⟨T⟩ (MeV) | ⟨μ_B⟩ (MeV) | Cells | Sampled events |
-|---|---|---|---|---|---|---|
-| **7.7** | 3.2 | 0.20 | **131** | **421** | 264,745 | 1,000 |
-| 11.5 | 2.1 | 0.20 | 146 | 316 | 362,521 | 1,000 |
-| 19.6 | 1.2 | 0.15 | 153 | 215 | 670,229 | 1,000 |
-
-At 7.7 GeV, $\langle\mu_B\rangle = 421$ MeV is closest to the hypothesized QCD critical point ($\mu_{Bc} \approx 350$ MeV), giving the strongest Ising signal.
-
-
 ## Repository Structure
 
 ```
 JetBinaryClass/
 │
-├── CMakeLists.txt               # Build: PYTHIA8 + FastJet (C++)
+├── CMakeLists.txt                    # Build: PYTHIA8 + FastJet (C++)
 ├── LICENSE
 ├── README.md
 │
-├── src/                         # Module 1: pp jet generation
-│   └── generate_pythia_jets.cc  # PYTHIA8 + FastJet → jet substructure CSV
+├── src/                              # Module 1: pp jet generation (C++)
+│   └── generate_pythia_jets.cc       # PYTHIA8 event gen + FastJet clustering
+│                                     # Output: jet substructure CSV
 │
-├── MLmodel/                     # Module 1: PyTorch binary classifier
-│   └── train.py                 # BCE loss · Adam · ROC-AUC evaluation
+├── MLmodel/                          # Module 1: PyTorch binary classifier
+│   └── train.py                      # BCE loss · Adam · ROC-AUC evaluation
 │
-├── results/                     # ROC curves, AUC scores, feature importance plots
+├── results/                          # ROC curves, AUC scores, feature plots
 │
-└── ising_embed/                 # Module 2: QCD critical point pipeline
+└── ising_embed/                      # Module 2: QCD critical point pipeline
     │
-    ├── embed_ising.py           # Main script: vHLLE freezeout.dat → embedded surface
-    ├── parameters.yaml          # Critical point parameters (Tc, μBc, w, ρ, α1, α2)
+    ├── parameters.yaml               # All physics parameters (Tc, μBc, w, ρ, α1, α2)
+    │                                 # Ising exponents, BES run config, ML features
     │
     ├── src/
-    │   ├── qcd_mapping.py       # (T, μB) → (r, h) linear Ising field map
-    │   ├── ising_scaling.py     # Schofield parametrization + κ₂, κ₃, κ₄ scaling
-    │   └── freezeout_reader.py  # vHLLE freeze-out surface parser (27-column format)
+    │   ├── qcd_mapping.py            # (T, μB) → (r, h) linear Ising field map
+    │   │                             # Parotto et al. 2020: Tc=143.2 MeV, μBc=350 MeV
+    │   ├── ising_scaling.py          # Schofield parametrization + κ₂, κ₃, κ₄ scaling
+    │   │                             # 3D Ising exponents: ν=0.630, δ=4.80, η=0.036
+    │   ├── freezeout_reader.py       # vHLLE freeze-out surface parser (27-column format)
+    │   └── embed_fluctuations.py     # Imprint Ising fluctuations per freeze-out cell
     │
     ├── analysis/
-    │   ├── build_event_features.py  # Net-proton cumulants from SMASH particle lists
-    │   └── plot_cumulants.py        # BES energy dependence: κ₄/κ₂ vs √s
-    │
-    ├── train_anomaly.py         # PyTorch: signal (CP-embedded) vs background
+    │   ├── cluster_heavyion_jets.cc      # FastJet clustering on SMASH particle lists
+    │   ├── train_heavyion.py             # PyTorch: signal (7.7 GeV) vs baseline (19.6 GeV)
+    │   ├── jets_signal_7gev.csv          # Jet features — signal,   √s = 7.7  GeV (label=1)
+    │   ├── jets_control_11gev.csv        # Jet features — control,  √s = 11.5 GeV (label=1)
+    │   ├── jets_baseline_19gev.csv       # Jet features — baseline, √s = 19.6 GeV (label=0)
+    │   ├── jets_training.csv             # Combined training set (signal + baseline)
+    │   ├── BES_critical_point_signal.png # κ₄/κ₂ vs √s — main physics result
+    │   └── heavyion_classifier_results.png  # ROC curves across BES energies
     │
     └── data/
-        ├── signal_freezeout_7gev.dat   # Ising-embedded surface, √s = 7.7 GeV
-        ├── control_11gev.dat           # Ising-embedded surface, √s = 11.5 GeV
-        ├── baseline_19gev.dat          # Ising-embedded surface, √s = 19.6 GeV
+        ├── signal_freezeout_7gev.dat     # Ising-embedded freeze-out, √s = 7.7  GeV
+        ├── control_11gev.dat             # Ising-embedded freeze-out, √s = 11.5 GeV
+        ├── baseline_19gev.dat            # Ising-embedded freeze-out, √s = 19.6 GeV
         │
-        └── vHlle-sampler BES II/       # Cooper-Frye sampled particle lists
+        └── vHlle-sampler BES II/         # Cooper-Frye sampled particle lists
             ├── signal_7gev/
-            │   ├── particle_lists.oscar   # 1000 sampled events
+            │   ├── particle_lists.oscar  # 1000 hadronic events, √s = 7.7  GeV
             │   └── 1000.root
             ├── control_11gev/
-            │   ├── particle_lists.oscar
+            │   ├── particle_lists.oscar  # 1000 hadronic events, √s = 11.5 GeV
             │   └── 1000.root
             └── baseline_19gev/
-                ├── particle_lists.oscar
+                ├── particle_lists.oscar  # 1000 hadronic events, √s = 19.6 GeV
                 └── 1000.root
 ```
 
-
+---
 
 
 ## Software Dependencies

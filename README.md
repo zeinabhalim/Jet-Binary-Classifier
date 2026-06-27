@@ -65,27 +65,13 @@ $$\kappa_n^{\rm cell} = 1 + s\,\left(\xi^{\,\text{exponent}_n} - 1\right)$$
 | 11.5 GeV | 316 MeV | 362,521 | 132,960 | Control (label=1) |
 | 19.6 GeV | 215 MeV | 670,229 | 15,801 | Baseline (label=0) |
  
-### Run Cooper-Frye Sampler
+### Run Cooper-Frye Sampler and SMASH Afterburner
  
 ```bash
 SAMPLER=~/Documents/vhlle-smash/smash-hadron-sampler_v3.0_backup/build/sampler
 EMBED=~/MLJET/JetBinaryClass/ising_embed/data
- 
-# Signal
-$SAMPLER events 1000 /tmp/cfg_7gev.txt
-# Control
-$SAMPLER events 1000 /tmp/cfg_11gev.txt
-# Baseline
-$SAMPLER events 1000 /tmp/cfg_19gev.txt
-```
- 
-### Run SMASH Afterburner
- 
-```bash
 # SMASH processes Cooper-Frye output with hadronic rescattering
-# Output: data/smash_output/{signal_7gev,control_11gev,baseline_19gev}/particle_lists.oscar
 ```
- 
 ### Cluster Jets and Train
  
 ```bash

@@ -87,15 +87,7 @@ $$\kappa_n^{\rm cell} = 1 + s\,\left(\xi^{\,\text{exponent}_n} - 1\right)$$
 | 19.6 GeV | 215 | 0.28 | Far from CP |
  
 The mean classifier score increases monotonically with $\mu_B$, consistent with the Ising embedding strength scaling with proximity to the critical point. The score crosses the random baseline (0.5) between 11.5 GeV ($\mu_B = 316$ MeV) and 7.7 GeV ($\mu_B = 421$ MeV), bracketing the conjectured critical point location at $\mu_{Bc} = 350$ MeV.
- 
-### Afterburner Impact on Jet Features
- 
-| Feature | Sampler Only | After SMASH | Shift |
-|---------|-------------|-------------|-------|
-| Jet mass | 8.96 GeV | 4.82 GeV | $-46\%$ |
-| $\sqrt{d_{12}}$ | — | — | $-12.8\%$ |
-| $p_T$ dispersion | — | — | $-0.16\%$ |
-  
+
 ---
  
 ## Repository Structure

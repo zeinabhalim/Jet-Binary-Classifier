@@ -6,7 +6,7 @@
 - Jet width (Girth)
 - Jet eccentricity
   
-The project construct a dual-pipeline framework for probing QGP dynamics, developed in two stages:
+The project constructs a dual-pipeline framework for probing QGP dynamics, developed in two stages:
  
 - **Stage 1 — Jet Binary Classifier**: Quark vs. gluon jet discrimination in pp collisions at $\sqrt{s} = 13$ TeV using PYTHIA8 + FastJet + PyTorch
 - **Stage 2 — Ising Embed**: Detection of the QCD critical point signature in Au+Au collisions at RHIC BES-II energies ($\sqrt{s_{NN}} = 7.7$–$19.6$ GeV) using a hybrid hydrodynamics framework with 3D Ising universality class embedding

@@ -12,7 +12,7 @@ The project constructs a dual-pipeline framework for probing QGP dynamics, devel
 - **Stage 2 — Ising Embed**: Detection of the QCD critical point signature in Au+Au collisions at RHIC BES-II energies ($\sqrt{s_{NN}} = 7.7$–$19.6$ GeV) using a hybrid hydrodynamics framework with 3D Ising universality class embedding
 ---
  
-## Stage 1 — pp Jet Binary Classifier
+## Stage 1 — p-p Jet Binary Classifier
  
 The combined correlations among jet substructure observables allow statistical discrimination between quark- and gluon-initiated jets, implemented as follows:
  
@@ -64,37 +64,6 @@ $$\kappa_n^{\rm cell} = 1 + s\,\left(\xi^{\,\text{exponent}_n} - 1\right)$$
 | 7.7 GeV | 421 MeV | 264,745 | 100,921 | Signal (label=1) |
 | 11.5 GeV | 316 MeV | 362,521 | 132,960 | Control (label=1) |
 | 19.6 GeV | 215 MeV | 670,229 | 15,801 | Baseline (label=0) |
- 
-### Run Cooper-Frye Sampler and SMASH Afterburner
- 
-```bash
-SAMPLER=~/Documents/vhlle-smash/smash-hadron-sampler_v3.0_backup/build/sampler
-EMBED=~/MLJET/JetBinaryClass/ising_embed/data
-# SMASH processes Cooper-Frye output with hadronic rescattering
-```
-### Cluster Jets and Train
- 
-```bash
-cd ising_embed/analysis
- 
-# Compile FastJet clustering
-g++ -std=c++11 -O2 cluster_heavyion_jets.cc \
-    -I$HOME/fastjet-install/include \
-    -L$HOME/fastjet-install/lib -lfastjet -o cluster_heavyion_jets
- 
-# Cluster from SMASH output (charged particles only)
-DATA=../data
-./cluster_heavyion_jets $DATA/smash_output/signal_7gev/particle_lists.oscar   jets_signal_7gev_smash.csv 1
-./cluster_heavyion_jets $DATA/smash_output/control_11gev/particle_lists.oscar jets_control_11gev_smash.csv 1
-./cluster_heavyion_jets $DATA/smash_output/baseline_19gev/particle_lists.oscar jets_baseline_19gev_smash.csv 0
- 
-# Train classifier
-python3 train_heavyion.py
- 
-# Generate plots
-python3 plot_afterburner_impact.py
-python3 plot_BES_critical_point_signal.py
-```
  
 ---
  
